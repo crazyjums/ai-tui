@@ -29,13 +29,17 @@ jobs:
       - name: Build Cascadia package
         shell: pwsh
         run: |
+          cmd /c ".\tools\razzle.cmd rel && bcz rel" 2>&1 | Tee-Object .\build.log
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
           & msbuild .\src\cascadia\CascadiaPackage\CascadiaPackage.wapproj `
             /m `
             /p:Configuration=Release `
             /p:Platform=x64 `
             /p:AppxBundle=Never `
             /p:AppxPackageDir="$env:GITHUB_WORKSPACE\artifacts\" `
-            /v:minimal 2>&1 | Tee-Object .\build.log
+            /v:minimal 2>&1 | Tee-Object -FilePath .\build.log -Append
           if ($LASTEXITCODE -ne 0) {
             exit $LASTEXITCODE
           }
