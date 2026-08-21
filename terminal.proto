@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package aiterminal.v1;
+
+// All messages travel through a user-ACL-protected named pipe using length-prefix framing.
+message Envelope {
+  uint32 protocol_version = 1;
+  string request_id = 2;
+  oneof payload {
+    CreateSession create_session = 10;
+    SendInput send_input = 11;
+    Resize resize = 12;
+    SubscribeViewport subscribe_viewport = 13;
+    CloseSession close_session = 14;
+    SessionEvent session_event = 20;
+    FrameDelta frame_delta = 21;
+    AgentStateChanged agent_state_changed = 22;
+    ServiceDiagnostic diagnostic = 23;
+  }
+}
+
+message GridSize { uint32 cols = 1; uint32 rows = 2; }
+
+message CreateSession {
+  string workspace_id = 1;
+  string profile_id = 2;
+  string cwd = 3;
+  GridSize grid = 4;
+  map<string, string> environment = 5;
+}
+
+message SendInput { string session_id = 1; bytes data = 2; }
+message Resize { string session_id = 1; GridSize grid = 2; }
+message SubscribeViewport { string session_id = 1; uint64 viewport_start = 2; uint32 rows = 3; }
+message CloseSession { string session_id = 1; bool force = 2; }
+
+message SessionEvent {
+  string session_id = 1;
+  enum Type { CREATED = 0; EXITED = 1; CLOSED = 2; FAILED = 3; TITLE_CHANGED = 4; }
+  Type type = 2;
+  int32 exit_code = 3;
+  string message = 4;
+}
+
+message CellRun {
+  uint32 row = 1;
+  uint32 col = 2;
+  string text = 3;
+  uint32 foreground_argb = 4;
+  uint32 background_argb = 5;
+  uint32 style_flags = 6;
+}
+
+message FrameDelta {
+  string session_id = 1;
+  uint64 sequence = 2;
+  GridSize grid = 3;
+  repeated CellRun cells = 4;
+  uint32 cursor_row = 5;
+  uint32 cursor_col = 6;
+  bool cursor_visible = 7;
+  bool full_repaint = 8;
+}
+
+message AgentStateChanged {
+  string session_id = 1;
+  enum State {
+    IDLE = 0; STARTING = 1; RUNNING = 2; THINKING = 3; EXECUTING = 4;
+    WAITING_PERMISSION = 5; WAITING_USER_INPUT = 6; COMPLETED = 7;
+    FAILED = 8; INTERRUPTED = 9;
+  }
+  State state = 2;
+  string summary = 3;
+  uint32 confidence = 4;
+  string evidence_source = 5;
+}
+
+message ServiceDiagnostic { string level = 1; string component = 2; string message = 3; }

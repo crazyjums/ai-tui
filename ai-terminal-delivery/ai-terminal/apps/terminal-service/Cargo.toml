@@ -1,0 +1,13 @@
+[package]
+name = "ai-terminal-service"
+version = "0.1.0"
+edition = "2021"
+description = "Session, terminal-state and agent-state service for AI Terminal"
+license = "MIT OR Apache-2.0"
+
+# Keep this standalone service isolated from any Cargo.toml files in its parent folders.
+[workspace]
+
+[dependencies]
+
+[dev-dependencies]

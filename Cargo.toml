@@ -1,0 +1,10 @@
+[package]
+name = "ai-terminal-service"
+version = "0.1.0"
+edition = "2021"
+description = "Session, terminal-state and agent-state service for AI Terminal"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+
+[dev-dependencies]

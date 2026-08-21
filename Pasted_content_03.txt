@@ -1,0 +1,1715 @@
+角色设定
+
+你现在是一名：
+
+* Windows 桌面应用架构师
+* Terminal Emulator / Shell 工程师
+* AI Coding / Coding Agent 工具研究员
+* UI/UX 产品设计师
+* Rust / TypeScript / React 桌面应用工程师
+* Windows ConPTY / Win32 API 工程师
+* 开源项目研究员
+
+我要你帮我从零设计并实现一个 Windows 平台的现代命令行终端工具。
+
+它不是普通的 CMD/PowerShell 外壳，也不是简单模仿 Windows Terminal。
+
+它的核心定位是：
+
+专门面向 AI Coding / Coding Agent 工作流设计的下一代 Windows Terminal。
+
+目标用户是长期使用：
+
+* Claude Code
+* OpenAI Codex CLI
+* Gemini CLI
+* OpenCode
+* Aider
+* GitHub Copilot CLI
+* Python / Go / Node.js / Java
+* Git
+* Docker
+* Kubernetes
+* WSL
+* SSH
+* PowerShell
+* CMD
+
+的开发人员。
+
+我要的是一个：
+
+漂亮、现代、高性能、多 Tab、多 Pane、适合长时间使用、专门优化 AI Coding 工作流的 Windows Terminal。
+
+暂定项目名称：
+
+AI Terminal
+
+名称后续可以修改。
+
+⸻
+
+一、第一阶段：先研究，不要直接写代码
+
+开始开发前，先研究当前主流 Terminal 和 AI Coding CLI 工具。
+
+重点研究：
+
+Terminal
+
+* Windows Terminal
+* Warp
+* Ghostty
+* WezTerm
+* Alacritty
+* Kitty
+* Tabby
+* Hyper
+* iTerm2
+* Rio
+* Wave Terminal
+
+分析它们：
+
+* 技术架构
+* UI
+* Tab 设计
+* Pane 设计
+* GPU 渲染
+* Terminal Emulator 实现
+* PTY 实现
+* Shell 管理
+* 快捷键
+* 搜索
+* Command Palette
+* Session 管理
+* 配置系统
+* 插件机制
+* SSH
+* WSL
+* 性能
+* 启动速度
+* 内存占用
+* 各自优缺点
+
+⸻
+
+二、研究 AI Coding 工具
+
+研究：
+
+* Claude Code
+* Codex CLI
+* Gemini CLI
+* OpenCode
+* Aider
+* GitHub Copilot CLI
+
+重点分析 AI Coding 工具与普通 Terminal 工作流有什么不同。
+
+例如：
+
+* AI Agent 经常运行几分钟甚至几十分钟
+* 输出内容非常长
+* 经常需要用户确认权限
+* 经常执行 shell 命令
+* 经常修改代码
+* 经常等待用户输入
+* 经常在多个项目之间切换
+* 经常需要查看 Git Diff
+* 经常查看 Agent 当前状态
+* 经常同时运行多个 Agent
+* Agent 可能需要长时间后台运行
+* 用户希望离开电脑后还能知道 Agent 是否完成
+
+根据这些特点重新设计 Terminal，而不是简单复制 Windows Terminal。
+
+⸻
+
+三、技术架构要求
+
+首先判断最适合的技术方案。
+
+候选包括但不限于：
+
+方案 A
+
+Rust + Tauri + React/TypeScript
+
+方案 B
+
+Rust + 原生 Windows UI
+
+方案 C
+
+C++ + WinUI 3
+
+方案 D
+
+Electron + React
+
+方案 E
+
+其他更合理方案
+
+必须做技术选型对比。
+
+比较：
+
+* 性能
+* 内存
+* Terminal 渲染性能
+* ConPTY 集成
+* GPU 加速
+* Windows API 集成
+* 开发效率
+* UI 能力
+* 插件能力
+* 安装包大小
+* 后续跨平台能力
+* 长期维护成本
+
+最后明确选择一个方案并解释原因。
+
+原则：
+
+不要为了开发方便直接选择 Electron。
+
+如果 Rust + Tauri、WinUI、C++ 或其他方案更适合，应优先考虑长期质量。
+
+⸻
+
+四、Terminal 必须是真正的 Terminal Emulator
+
+不要简单：
+
+启动 cmd.exe
+读取 stdout
+显示到网页 div
+
+这种 Demo 方案。
+
+必须认真解决 Windows Terminal 的底层问题。
+
+研究并设计：
+
+UI
+ ↓
+Terminal Emulator
+ ↓
+PTY abstraction
+ ↓
+Windows ConPTY
+ ↓
+PowerShell / CMD / WSL / SSH
+ ↓
+CLI Application
+
+至少需要理解并正确处理：
+
+* Windows ConPTY
+* stdin
+* stdout
+* stderr
+* VT100
+* ANSI Escape Sequence
+* xterm compatibility
+* Cursor
+* Color
+* Alternate Screen Buffer
+* Mouse events
+* Keyboard events
+* Resize
+* Unicode
+* Emoji
+* CJK
+* IME
+* Clipboard
+* OSC
+* Hyperlink
+* Terminal title
+* Shell lifecycle
+* Process lifecycle
+* Exit Code
+* Working Directory
+
+不要自己草率实现 ANSI Parser。
+
+优先评估成熟开源 Terminal Emulator Core。
+
+⸻
+
+五、核心 UI
+
+整体视觉参考：
+
+* Windows Terminal
+* Warp
+* Arc Browser
+* VS Code
+* Raycast
+* Linear
+* macOS Terminal
+
+但不要完全复制任何产品。
+
+整体风格：
+
+* 极简
+* 高级
+* 专业
+* 深色模式优先
+* 适合程序员每天使用 8 小时
+* 信息密度高但不杂乱
+* 动画克制
+* 圆角适度
+* 半透明效果适度
+* Windows 11 风格
+* Fluent Design
+* Acrylic / Mica 可作为可选效果
+
+默认布局：
+
+┌──────────────────────────────────────────────────────────┐
+│ Workspace / Tab1 / Tab2 / Tab3                    +  ⚙ │
+├──────────────┬───────────────────────────────────────────┤
+│              │                                           │
+│ Workspace    │           Terminal                        │
+│ Explorer     │                                           │
+│              │                                           │
+│ Project A    │                                           │
+│ Project B    │                                           │
+│ Project C    │                                           │
+│              │                                           │
+├──────────────┴───────────────────────────────────────────┤
+│ Agent Status │ Git │ Branch │ cwd │ Shell │ CPU │ Memory │
+└──────────────────────────────────────────────────────────┘
+
+左侧 Workspace 可以隐藏。
+
+⸻
+
+六、多 Tab
+
+必须支持真正好用的多 Tab。
+
+每个 Tab 可以是：
+
+* PowerShell
+* CMD
+* WSL
+* SSH
+* Claude Code
+* Codex
+* Gemini CLI
+* OpenCode
+* 自定义命令
+
+Tab 显示：
+
+● Claude — backend
+● Codex — frontend
+● PowerShell
+● SSH prod
+
+状态标记：
+
+● Running
+✓ Completed
+! Waiting Input
+× Failed
+○ Idle
+
+Agent 完成任务后 Tab 应有明显但不打扰的状态提示。
+
+支持：
+
+* 新建
+* 关闭
+* Duplicate
+* Rename
+* Pin
+* Drag
+* Reorder
+* Restore
+* Tab Group
+* 快捷键切换
+* 最近使用 Tab
+
+⸻
+
+七、多 Pane
+
+类似：
+
+* tmux
+* iTerm2
+* Windows Terminal
+* VS Code
+
+支持：
+
+Horizontal Split
+┌───────────┬───────────┐
+│ Claude    │ Codex     │
+│           │           │
+└───────────┴───────────┘
+
+以及：
+
+Vertical Split
+┌───────────────────────┐
+│ Claude                │
+├───────────────────────┤
+│ npm dev               │
+└───────────────────────┘
+
+支持任意嵌套。
+
+Pane 可以：
+
+* 调整大小
+* 移动
+* Zoom
+* Close
+* Swap
+* Duplicate
+
+必须有合理快捷键。
+
+⸻
+
+八、Workspace
+
+这是区别于普通 Terminal 的重要功能。
+
+例如：
+
+Workspace: AI-CICD
+backend
+  ├ Claude
+  ├ PowerShell
+  └ Tests
+frontend
+  ├ Codex
+  └ npm dev
+server
+  └ SSH
+
+Workspace 保存：
+
+* Tab
+* Pane
+* cwd
+* Shell
+* 环境变量
+* Agent
+* 启动命令
+* Layout
+
+下次打开：
+
+AI Terminal
+    ↓
+打开 AI-CICD Workspace
+    ↓
+整个开发环境恢复
+
+类似 IDE Workspace。
+
+⸻
+
+九、专门为 AI Coding Agent 设计
+
+这是整个产品最重要的部分。
+
+不要只做普通 Terminal。
+
+9.1 Agent 状态识别
+
+至少设计：
+
+Idle
+Running
+Thinking
+Executing
+Waiting Permission
+Waiting User Input
+Completed
+Failed
+Interrupted
+
+UI 中显示：
+
+Claude Code
+Running · 03:42
+Editing:
+src/service/user.go
+Commands:
+go test ./...
+
+如果 CLI 无公开协议，可以先采用：
+
+* Process 状态
+* Terminal output pattern
+* Hook
+* Plugin Adapter
+* CLI wrapper
+
+等方式实现。
+
+架构必须允许后面加入不同 Agent Adapter。
+
+⸻
+
+十、Agent Dashboard
+
+提供一个 Dashboard：
+
+AI Agents
+Claude
+backend
+Running
+12m
+Codex
+frontend
+Waiting Approval
+3m
+Gemini
+docs
+Completed
+8m
+
+让我能快速知道：
+
+哪个 Agent 在干什么。
+
+⸻
+
+十一、权限请求提醒
+
+AI Coding 经常出现：
+
+Allow this command?
+rm xxx
+
+或者：
+
+Allow file modification?
+
+Terminal 应识别这种等待状态。
+
+提供：
+
+* Tab 高亮
+* Windows Toast
+* Taskbar 提醒
+* 声音（可关闭）
+
+后续架构预留：
+
+* 手机通知
+* 飞书
+* Telegram
+* Webhook
+
+例如：
+
+Claude Code is waiting for approval.
+Command:
+npm install xxx
+
+⸻
+
+十二、Command Palette
+
+类似 VS Code / Raycast。
+
+快捷键：
+
+Ctrl + Shift + P
+
+支持：
+
+New Terminal
+New Claude
+New Codex
+Split Right
+Split Down
+Open Workspace
+SSH Connect
+Run Command
+Switch Theme
+Open Settings
+Search Sessions
+
+支持 fuzzy search。
+
+⸻
+
+十三、Quick Launch
+
+支持：
+
+Ctrl + K
+
+弹出：
+
+> claude
+> codex
+> powershell
+> ubuntu
+> ssh dev-server
+> docker
+
+一键启动。
+
+⸻
+
+十四、AI Agent 快速启动
+
+例如配置：
+
+Claude Code
+Codex
+Gemini
+OpenCode
+
+点击：
+
+New Claude
+
+自动：
+
+cd current-project
+claude
+
+创建新的 Tab 或 Pane。
+
+⸻
+
+十五、项目管理
+
+能够保存项目：
+
+Projects
+AI-CICD
+D:\codes\ai-cicd
+Backend
+D:\codes\backend
+Frontend
+D:\codes\frontend
+
+点击项目：
+
+Open Terminal
+Open Claude
+Open Codex
+Open VS Code
+Open Explorer
+
+⸻
+
+十六、Git 集成
+
+状态栏显示：
+
+main ↑2 ↓1  M3 +12 -4
+
+支持点击打开 Git Panel。
+
+展示：
+
+* branch
+* staged
+* modified
+* untracked
+* commit
+* diff
+
+第一版不需要做完整 Git Client，但架构要允许逐渐增强。
+
+⸻
+
+十七、Terminal 搜索
+
+Terminal 输出可能几万行。
+
+支持：
+
+Ctrl + F
+
+搜索：
+
+* 普通文本
+* Regex
+* Case Sensitive
+
+快速定位：
+
+ERROR
+FAILED
+Exception
+permission
+
+⸻
+
+十八、Terminal Block
+
+研究 Warp 的 Command Block 思路。
+
+例如：
+
+$ go test ./...
+────────── Command ──────────
+PASS
+ok xxx
+Exit Code: 0
+Duration: 12.4s
+
+允许：
+
+* Copy Command
+* Copy Output
+* Re-run
+* Search
+* Collapse
+
+但不能影响传统 Terminal 应用兼容性。
+
+需要设计合理实现方案。
+
+⸻
+
+十九、Session History
+
+记录：
+
+Yesterday
+AI-CICD
+Claude
+2h14m
+Frontend
+Codex
+48m
+
+能够恢复：
+
+* cwd
+* command
+* workspace
+* layout
+
+注意：
+
+不要默认保存敏感 Terminal 内容。
+
+历史日志保存必须支持：
+
+Off
+Metadata Only
+Full
+
+⸻
+
+二十、SSH
+
+提供 SSH Manager：
+
+Production
+10.x.x.x
+user
+Test
+10.x.x.x
+user
+
+支持：
+
+* SSH Config
+* ~/.ssh/config
+* Private Key
+* ProxyJump
+
+密码不要明文保存。
+
+优先使用 Windows Credential Manager。
+
+⸻
+
+二十一、WSL
+
+自动识别：
+
+wsl -l
+
+显示：
+
+Ubuntu
+Debian
+Arch
+
+一键启动。
+
+支持：
+
+WSL cwd
+Windows cwd
+
+之间合理转换。
+
+⸻
+
+二十二、Shell Profiles
+
+自动识别：
+
+PowerShell
+PowerShell 7
+CMD
+Git Bash
+WSL
+Developer PowerShell
+
+允许自定义：
+
+name
+command
+args
+env
+icon
+cwd
+
+⸻
+
+二十三、字体与 Terminal 显示
+
+重点支持：
+
+* JetBrains Mono
+* Cascadia Code
+* Nerd Fonts
+
+支持：
+
+* Font Size
+* Line Height
+* Letter Spacing
+* Ligature
+* Cursor Style
+* Cursor Blink
+* Bold
+* Italic
+
+必须很好支持：
+
+中文 / English / Emoji / Nerd Font。
+
+⸻
+
+二十四、主题系统
+
+内置：
+
+* Dark
+* Light
+* OLED
+* Dracula
+* One Dark
+* Tokyo Night
+* Catppuccin
+* Nord
+
+并允许自定义 JSON Theme。
+
+不要把 Theme 写死在 UI 代码。
+
+⸻
+
+二十五、快捷键
+
+设计完整快捷键体系。
+
+参考：
+
+Windows Terminal / VS Code / tmux / Chrome。
+
+例如：
+
+Ctrl + Shift + T
+New Tab
+Ctrl + Shift + W
+Close Tab
+Ctrl + Tab
+Next Tab
+Ctrl + Shift + P
+Command Palette
+Alt + Shift + →
+Split Right
+Alt + Shift + ↓
+Split Down
+
+所有快捷键可配置。
+
+⸻
+
+二十六、Settings
+
+Settings 不要只提供 JSON。
+
+提供漂亮 GUI。
+
+包括：
+
+General
+Appearance
+Profiles
+Terminal
+Keyboard
+AI Agents
+Workspace
+SSH
+Notifications
+Privacy
+Advanced
+
+同时支持高级用户直接修改配置文件。
+
+⸻
+
+二十七、插件系统
+
+架构需要考虑插件。
+
+例如：
+
+plugins/
+claude
+codex
+gemini
+git
+ssh
+docker
+kubernetes
+
+定义标准接口：
+
+Terminal Plugin
+Agent Adapter
+Status Provider
+Command Provider
+Notification Provider
+
+不要第一版把所有东西硬编码在 Core。
+
+⸻
+
+二十八、性能目标
+
+目标：
+
+冷启动：
+
+< 1 秒
+
+普通情况下：
+
+Memory < 150MB
+
+Terminal 大量输出时：
+
+* UI 不冻结
+* 输入低延迟
+* Scroll 流畅
+
+必须设计：
+
+* Ring Buffer
+* Virtualized Rendering
+* Backpressure
+* Incremental Parsing
+* Async IO
+
+避免 React 因 Terminal 大量 stdout 导致疯狂 re-render。
+
+⸻
+
+二十九、Terminal Renderer
+
+重点研究：
+
+* xterm.js
+* alacritty_terminal
+* wezterm terminal core
+* libghostty
+* Windows Terminal internals
+
+判断：
+
+是：
+
+WebGL + xterm.js
+
+还是：
+
+Rust Terminal Core + GPU renderer
+
+还是其他架构。
+
+给出明确分析。
+
+不能因为实现快就盲目选择 xterm.js。
+
+⸻
+
+三十、进程架构
+
+希望考虑：
+
+AI Terminal
+│
+├── UI Process
+│
+├── Terminal Core
+│
+├── PTY Manager
+│
+├── Session Manager
+│
+├── Workspace Manager
+│
+├── Agent Manager
+│
+├── Plugin Runtime
+│
+└── Notification Manager
+
+避免一个 Terminal Session Crash 导致整个程序退出。
+
+分析是否需要：
+
+Terminal Server Process
+
+类似：
+
+UI
+ ↓ IPC
+Terminal Server
+ ↓
+ConPTY
+
+⸻
+
+三十一、安全设计
+
+Terminal 属于高权限软件。
+
+必须考虑：
+
+* Command Injection
+* OSC Escape Attack
+* Malicious terminal output
+* Credential leakage
+* Plugin security
+* Workspace config injection
+* SSH private key
+* Clipboard attack
+* Hyperlink spoofing
+
+尤其注意 AI Agent 自动执行命令带来的安全风险。
+
+⸻
+
+三十二、配置存储
+
+设计：
+
+%APPDATA%\AITerminal\
+
+类似：
+
+config.json
+profiles.json
+keybindings.json
+themes\
+workspaces\
+plugins\
+
+如果选择 SQLite，也解释哪些数据应该放 SQLite。
+
+⸻
+
+三十三、崩溃恢复
+
+如果 AI Terminal Crash：
+
+重新打开时：
+
+Restore previous workspace?
+
+尽可能恢复：
+
+* Layout
+* Project
+* cwd
+* Tab metadata
+
+如果底层 Agent 进程仍存在，研究是否能重新 attach。
+
+明确说明：
+
+哪些进程能恢复，
+
+哪些不能恢复。
+
+⸻
+
+三十四、系统托盘
+
+支持最小化到 Tray。
+
+Agent 在后台继续执行。
+
+Tray：
+
+AI Terminal
+Claude — Running
+Codex — Completed
+Open
+New Terminal
+Exit
+
+⸻
+
+三十五、Windows 通知
+
+Agent：
+
+Completed
+Failed
+Waiting Permission
+
+触发 Windows Toast。
+
+例如：
+
+Claude Code completed
+Project:
+backend
+Duration:
+14m 32s
+
+⸻
+
+三十六、未来能力
+
+架构预留但第一版不一定实现：
+
+Remote Agent
+
+手机 / Web 查看：
+
+Claude Running
+Codex Waiting
+
+飞书通知
+
+Claude 正在等待授权
+
+Web Dashboard
+
+远程查看 Agent。
+
+MCP
+
+让 Terminal 自己成为 MCP Client / Server。
+
+Agent Session Protocol
+
+统一：
+
+Claude
+Codex
+Gemini
+OpenCode
+
+状态。
+
+⸻
+
+三十七、UI 原型
+
+开发前必须先设计 UI。
+
+至少设计：
+
+1. 主 Terminal
+2. 多 Tab
+3. Split Pane
+4. Command Palette
+5. Workspace
+6. Agent Dashboard
+7. Settings
+8. SSH Manager
+9. Project Manager
+10. Session History
+
+不要只画框架图。
+
+给出真正可以开发的 UI 设计。
+
+如果你具备生成图片能力，可以生成高保真 UI Mockup。
+
+⸻
+
+三十八、项目工程结构
+
+最终工程必须清晰。
+
+例如：
+
+ai-terminal/
+apps/
+packages/
+terminal-core/
+pty/
+session/
+workspace/
+agent/
+plugins/
+ui/
+config/
+docs/
+tests/
+
+实际目录根据技术选型重新设计。
+
+不能把所有逻辑写在：
+
+App.tsx
+
+⸻
+
+三十九、测试
+
+至少设计：
+
+Unit Test
+
+Terminal Parser
+
+Config
+
+Workspace
+
+Agent Adapter
+
+Integration Test
+
+ConPTY
+
+PowerShell
+
+CMD
+
+WSL
+
+Stress Test
+
+测试：
+
+yes
+
+或类似高输出场景。
+
+模拟：
+
+100MB stdout
+
+确保 Terminal 不崩。
+
+⸻
+
+四十、开发阶段
+
+不要试图一次做完。
+
+按照：
+
+Phase 0
+
+技术验证
+
+完成：
+
+ConPTY
+ ↓
+Terminal Core
+ ↓
+Renderer
+
+运行：
+
+PowerShell
+
+Phase 1
+
+MVP Terminal
+
+完成：
+
+* Terminal
+* Tab
+* Pane
+* PowerShell
+* CMD
+* WSL
+* Theme
+* Settings
+
+Phase 2
+
+Developer Terminal
+
+加入：
+
+* Workspace
+* Project
+* SSH
+* Git
+* Session
+
+Phase 3
+
+AI Coding Terminal
+
+加入：
+
+* Claude
+* Codex
+* Gemini
+* OpenCode
+* Agent Status
+* Agent Dashboard
+* Notifications
+
+Phase 4
+
+Advanced
+
+加入：
+
+* Plugin
+* Remote
+* Web Dashboard
+* MCP
+* 飞书通知
+
+⸻
+
+四十一、第一版 MVP
+
+不要让第一版范围失控。
+
+第一版必须真正做好：
+
+Terminal
++
+Tab
++
+Pane
++
+Workspace
++
+PowerShell
++
+CMD
++
+WSL
++
+Claude Code
++
+Codex
++
+Theme
++
+Command Palette
+
+我宁愿：
+
+10 个功能非常好用
+
+也不要：
+
+50 个半成品功能。
+
+⸻
+
+四十二、开源项目复用
+
+不要为了“从零”而重复造轮子。
+
+主动寻找：
+
+* MIT
+* Apache-2.0
+* BSD
+
+等许可证兼容的优秀开源项目。
+
+尤其研究：
+
+* Terminal Emulator Core
+* ANSI Parser
+* ConPTY wrapper
+* GPU Renderer
+* Tab system
+* Pane system
+* SSH library
+
+如果复用开源代码：
+
+必须记录：
+
+Project
+Repository
+License
+Used Component
+Modification
+
+不要直接复制许可证不兼容代码。
+
+⸻
+
+四十三、交互体验要求
+
+所有设计都必须以：
+
+“开发者每天使用 8 小时是否舒服”
+
+作为判断标准。
+
+尤其关注：
+
+* 操作是否需要太多鼠标
+* 快捷键是否合理
+* Pane 是否容易管理
+* Agent 状态是否一眼可见
+* Terminal 是否足够快
+* 字体是否舒服
+* Tab 多了是否混乱
+* Workspace 是否真的节省时间
+* AI Agent 是否真正比在 Windows Terminal 中运行更方便
+
+⸻
+
+四十四、不要做成 IDE
+
+非常重要。
+
+这个软件的定位仍然是：
+
+Terminal First
+
+不是重新实现：
+
+VS Code
+Cursor
+
+不要加入：
+
+* 完整代码编辑器
+* 完整文件 IDE
+* Debugger
+* Language Server
+
+除非它们只是轻量辅助。
+
+核心永远是：
+
+Terminal
++
+AI Coding Agent
++
+Developer Workflow
+
+⸻
+
+四十五、输出完整设计文档
+
+正式开发前输出：
+
+AI Terminal Architecture Document
+
+包括：
+
+1. 产品定位
+2. 用户画像
+3. 用户痛点
+4. 竞品分析
+5. AI Coding Terminal 与普通 Terminal 的区别
+6. 功能列表
+7. MVP 范围
+8. UI/UX
+9. 技术选型
+10. Terminal Emulator 架构
+11. ConPTY 架构
+12. Renderer
+13. Process Model
+14. Session
+15. Workspace
+16. Agent Adapter
+17. Plugin
+18. Security
+19. Performance
+20. 项目目录
+21. 数据结构
+22. IPC
+23. 配置系统
+24. Roadmap
+25. 测试方案
+26. 风险
+27. 开源许可证
+28. 后续规划
+
+其中关键架构使用：
+
+* Mermaid
+* Sequence Diagram
+* State Diagram
+* Component Diagram
+
+进行说明。
+
+⸻
+
+四十六、然后开始真正实现
+
+设计完成后不要停在 PPT / 文档阶段。
+
+创建真正可以运行的工程。
+
+要求：
+
+git clone
+install dependencies
+build
+run
+
+即可启动。
+
+每完成一个阶段：
+
+执行：
+
+build
+lint
+test
+
+发现错误就修复。
+
+⸻
+
+四十七、最终必须交付
+
+最终交付：
+
+1. 产品设计
+
+完整产品说明。
+
+2. UI Design
+
+完整 UI。
+
+3. Architecture
+
+完整架构。
+
+4. Source Code
+
+真正可以运行。
+
+5. README
+
+包含：
+
+Build
+Development
+Architecture
+Configuration
+Keyboard
+Plugin
+Troubleshooting
+
+6. Windows Installer
+
+尽量输出：
+
+AI-Terminal-Setup.exe
+
+或：
+
+AI-Terminal.msi
+
+7. Screenshot
+
+展示：
+
+* Terminal
+* Tab
+* Pane
+* Claude Code
+* Codex
+* Settings
+* Workspace
+
+⸻
+
+四十八、验收标准
+
+最终我会按照下面标准验收：
+
+Terminal
+
+PowerShell 可以正常运行：
+
+Get-ChildItem
+
+CMD：
+
+dir
+
+WSL：
+
+ls -la
+
+Git：
+
+git status
+
+交互程序：
+
+vim
+top
+python
+ssh
+
+必须正常工作。
+
+⸻
+
+Tab
+
+同时运行：
+
+PowerShell
+Claude
+Codex
+WSL
+
+互不影响。
+
+⸻
+
+Pane
+
+至少可以同时：
+
+Claude | Codex
+-------|------
+npm    | test
+
+⸻
+
+AI Coding
+
+能够：
+
+打开项目
+↓
+启动 Claude Code
+↓
+Agent 执行任务
+↓
+识别 Running
+↓
+Agent 等待输入
+↓
+显示 Waiting
+↓
+任务完成
+↓
+显示 Completed
+↓
+发送 Windows Notification
+
+⸻
+
+性能
+
+大量 Terminal 输出时：
+
+* UI 不明显卡顿
+* Terminal 输入没有明显延迟
+* 切换 Tab 流畅
+* Scroll 流畅
+
+⸻
+
+最重要的原则
+
+不要做：
+
+“一个 React 页面 + 黑色 textarea + cmd.exe”
+
+这种 Demo。
+
+我要做的是一个真正能够长期使用的：
+
+AI Coding Native Terminal
+
+它应该让开发人员未来可以这样工作：
+
+AI Terminal
+│
+├── Project A
+│   ├── Claude Code
+│   ├── Codex
+│   └── Dev Server
+│
+├── Project B
+│   ├── Claude Code
+│   └── Tests
+│
+└── Production
+    └── SSH
+
+打开一个软件，就可以管理：
+
+Shell
++
+Project
++
+Workspace
++
+AI Agent
++
+Remote Server
+
+最终体验应该是：
+
+Windows Terminal 的可靠性
+
+* Warp 的现代交互
+* VS Code 的 Workspace 思路
+* tmux 的 Pane 能力
+* Raycast 的操作效率
+* 专门针对 Claude Code / Codex 等 Coding Agent 的任务管理能力。
+
+先做充分研究和架构设计，再开始实现。
+
+任何重要技术决策都需要说明：
+
+为什么这么选、有哪些替代方案、代价是什么。
+
+目标不是快速做出一个 Demo，而是建立一个真正可以持续迭代、长期使用、未来可以开源的 Windows AI Coding Terminal。

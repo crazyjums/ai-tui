@@ -1,0 +1,33 @@
+# Node/Vite prototype
+apps/design-prototype/node_modules/
+apps/design-prototype/dist/
+apps/design-prototype/.vite/
+*.tsbuildinfo
+
+# Rust service
+apps/terminal-service/target/
+
+# Windows native build output
+apps/windows-ui/.vs/
+apps/windows-ui/x64/
+apps/windows-ui/ARM64/
+apps/windows-ui/Debug/
+apps/windows-ui/Release/
+
+# Local runtime data, diagnostics and secrets
+.runtime/
+*.log
+*.sqlite-wal
+*.sqlite-shm
+*.pfx
+*.key
+.env
+
+# The delivered project lives under ai-terminal-delivery/ai-terminal as well as
+# the historical loose prototype files at the repository root.
+**/node_modules/
+**/dist/
+**/target/
+**/.vite/
+**/.vs/
+*.tsbuildinfo
