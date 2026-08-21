@@ -1801,6 +1801,55 @@ namespace winrt::TerminalApp::implementation
     }
 
     // Method Description:
+    // - Update the visible context and route a selection through the existing
+    //   named-window/workspace restoration path. The rail therefore reuses the
+    //   same workspace model as the built-in workspace flyout.
+    void TerminalPage::_WorkspaceSelectionChanged(const IInspectable&,
+                                                   const SelectionChangedEventArgs& eventArgs)
+    {
+        const auto addedItems = eventArgs.AddedItems();
+        if (addedItems.Size() > 0)
+        {
+            const auto addedItem = addedItems.GetAt(0);
+            if (const auto item = addedItem.try_as<ListViewItem>())
+            {
+                if (const auto name = item.Tag().try_as<hstring>())
+                {
+                    WorkspaceStatus().Text(*name);
+                    if (_startupState == StartupState::Initialized && *name != _WindowProperties.WindowName())
+                    {
+                        _OpenWorkspaceWindow(*name);
+                    }
+                }
+            }
+            else if (const auto name = addedItem.try_as<hstring>())
+            {
+                WorkspaceStatus().Text(*name);
+                if (_startupState == StartupState::Initialized && *name != _WindowProperties.WindowName())
+                {
+                    _OpenWorkspaceWindow(*name);
+                }
+            }
+        }
+    }
+
+    // Method Description:
+    // - Add a named workspace entry. Selecting it routes through the existing
+    //   workspace restoration path, which creates or summons the named window.
+    void TerminalPage::_NewWorkspaceClick(const IInspectable&,
+                                          const RoutedEventArgs&)
+    {
+        std::wstring name{ L"Workspace " };
+        name += std::to_wstring(WorkspaceList().Items().Size());
+        const auto workspaceName = hstring{ name };
+        auto item = ListViewItem{};
+        item.Content(box_value(workspaceName));
+        item.Tag(box_value(workspaceName));
+        WorkspaceList().Items().Append(item);
+        WorkspaceList().SelectedItem(item);
+    }
+
+    // Method Description:
     // - Called when the users pressed keyBindings while CommandPaletteElement is open.
     // - As of GH#8480, this is also bound to the TabRowControl's KeyUp event.
     //   That should only fire when focus is in the tab row, which is hard to

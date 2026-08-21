@@ -522,6 +522,8 @@ namespace winrt::TerminalApp::implementation
         safe_void_coroutine _OnTabPointerReleasedCloseTab(IInspectable sender);
 
         void _OnTabSelectionChanged(const IInspectable& sender, const Windows::UI::Xaml::Controls::SelectionChangedEventArgs& eventArgs);
+        void _WorkspaceSelectionChanged(const IInspectable& sender, const Windows::UI::Xaml::Controls::SelectionChangedEventArgs& eventArgs);
+        void _NewWorkspaceClick(const IInspectable& sender, const Windows::UI::Xaml::RoutedEventArgs& eventArgs);
         void _OnTabItemsChanged(const IInspectable& sender, const Windows::Foundation::Collections::IVectorChangedEventArgs& eventArgs);
         void _OnTabCloseRequested(const IInspectable& sender, const Microsoft::UI::Xaml::Controls::TabViewTabCloseRequestedEventArgs& eventArgs);
         void _OnFirstLayout(const IInspectable& sender, const IInspectable& eventArgs);

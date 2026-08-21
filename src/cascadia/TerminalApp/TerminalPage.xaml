@@ -56,13 +56,87 @@
             </mux:InfoBar>
         </StackPanel>
 
-        <Grid x:Name="TabContent"
+        <!--
+            Workspace shell: keep the existing terminal surface intact while
+            giving the window a persistent, Windows Terminal-style workspace
+            rail. This is intentionally a small first slice so the panel can
+            evolve independently from tab and pane layout.
+        -->
+        <Grid x:Name="WorkspaceShell"
               Grid.Row="2"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch">
-            <Grid.Background>
-                <ImageBrush />
-            </Grid.Background>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="224" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border x:Name="WorkspacePanel"
+                    Grid.Column="0"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="0,0,1,0"
+                    Padding="12,14,10,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Spacing="2">
+                        <TextBlock FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Text="WORKSPACES" />
+                        <TextBlock x:Name="WorkspaceStatus"
+                                   FontSize="13"
+                                   Text="AI-CICD"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <ListView x:Name="WorkspaceList"
+                              Grid.Row="1"
+                              Margin="0,14,0,10"
+                              SelectionMode="Single"
+                              SelectionChanged="_WorkspaceSelectionChanged"
+                              Background="Transparent"
+                              BorderThickness="0">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="12,9" />
+                                <Setter Property="Margin" Value="0,2,0,2" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListViewItem Content="AI-CICD"
+                                      Tag="AI-CICD"
+                                      IsSelected="True" />
+                        <ListViewItem Content="Backend"
+                                      Tag="Backend" />
+                        <ListViewItem Content="Frontend"
+                                      Tag="Frontend" />
+                        <ListViewItem Content="Production"
+                                      Tag="Production" />
+                    </ListView>
+
+                    <Button x:Name="NewWorkspaceButton"
+                            Grid.Row="2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Click="_NewWorkspaceClick"
+                            Content="+  New workspace" />
+                </Grid>
+            </Border>
+
+            <Grid x:Name="TabContent"
+                  Grid.Column="1"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch">
+                <Grid.Background>
+                    <ImageBrush />
+                </Grid.Background>
+            </Grid>
         </Grid>
 
         <!--
