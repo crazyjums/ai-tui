@@ -29,12 +29,16 @@ jobs:
       - name: Build Cascadia package
         shell: pwsh
         run: |
-          msbuild .\src\cascadia\CascadiaPackage\CascadiaPackage.wapproj `
+          & msbuild .\src\cascadia\CascadiaPackage\CascadiaPackage.wapproj `
             /m `
             /p:Configuration=Release `
             /p:Platform=x64 `
             /p:AppxBundle=Never `
-            /p:AppxPackageDir="$env:GITHUB_WORKSPACE\artifacts\"
+            /p:AppxPackageDir="$env:GITHUB_WORKSPACE\artifacts\" `
+            /v:minimal 2>&1 | Tee-Object .\build.log
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
       - name: Collect Windows Terminal package
         shell: pwsh
@@ -56,3 +60,11 @@ jobs:
           name: workspace-panel-mvp-windows
           path: artifacts/collected/*
           if-no-files-found: error
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-panel-mvp-build-log
+          path: build.log
+          if-no-files-found: warn
