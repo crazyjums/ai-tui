@@ -1,5 +1,7 @@
 # AI Terminal Windows UI
 
+一个适合 AI 大模型的现代版终端命令行工具。
+
 This directory is the **production UI boundary**, designed for a C++20 / WinUI 3 Windows App SDK project. It is intentionally separate from the runnable design prototype in `../design-prototype`.
 
 ## Responsibility
