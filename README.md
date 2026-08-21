@@ -2,6 +2,16 @@
 
 一个适合 AI 大模型的现代版终端命令行工具。
 
+## Native MVP
+
+`AI-Terminal.exe` is the minimal native Windows build. It opens a dark desktop window with one real local PowerShell session, an output area, a command input, and a Run button. It does not use a browser or a simulated terminal.
+
+```powershell
+.\AI-Terminal.exe
+```
+
+The MVP intentionally leaves tabs, SSH profiles, Agent context and WSL orchestration for later iterations.
+
 This directory is the **production UI boundary**, designed for a C++20 / WinUI 3 Windows App SDK project. It is intentionally separate from the runnable design prototype in `../design-prototype`.
 
 ## Responsibility
