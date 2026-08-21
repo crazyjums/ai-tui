@@ -1,0 +1,58 @@
+name: Build Workspace Panel
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - workspace-panel-mvp
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet packages
+        shell: pwsh
+        run: |
+          .\dep\nuget\nuget.exe restore .\OpenConsole.slnx
+          .\dep\nuget\nuget.exe restore .\dep\nuget\packages.config
+
+      - name: Build Cascadia package
+        shell: pwsh
+        run: |
+          msbuild .\src\cascadia\CascadiaPackage\CascadiaPackage.wapproj `
+            /m `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:AppxBundle=Never `
+            /p:AppxPackageDir="$env:GITHUB_WORKSPACE\artifacts\"
+
+      - name: Collect Windows Terminal package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force .\artifacts\collected | Out-Null
+          Get-ChildItem .\artifacts -Recurse -File |
+            Where-Object { $_.Extension -in '.msix', '.msixbundle', '.appx', '.appxbundle', '.cer' } |
+            Copy-Item -Destination .\artifacts\collected -Force
+          Get-ChildItem .\bin\x64\Release -Recurse -File -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -in 'WindowsTerminal.exe', 'wt.exe' } |
+            Copy-Item -Destination .\artifacts\collected -Force
+          if (-not (Get-ChildItem .\artifacts\collected -File)) {
+            throw 'No Windows Terminal package or executable was produced.'
+          }
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-panel-mvp-windows
+          path: artifacts/collected/*
+          if-no-files-found: error
